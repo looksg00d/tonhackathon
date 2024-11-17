@@ -40,9 +40,27 @@ const TradingGame: FC = () => {
   const [visibleData, setVisibleData] = useState<ChartDataPoint[]>([]);
   const [score, setScore] = useState(0);
   const [hasPredicted, setHasPredicted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const HIDDEN_DAYS = 7;
   const ANIMATION_SPEED = 50;
+
+  // Эффект для анимации данных при их обновлении
+  useEffect(() => {
+    if (fullData.length > 0 && !isLoading) {
+      const animateData = async () => {
+        const visible = fullData.slice(0, -HIDDEN_DAYS);
+        for (let i = 0; i < visible.length; i += 2) {
+          const chunk = visible.slice(0, i + 2);
+          setVisibleData(chunk);
+          await new Promise(resolve => setTimeout(resolve, ANIMATION_SPEED));
+        }
+        setShowPrediction(true);
+      };
+
+      animateData();
+    }
+  }, [fullData, isLoading]);
 
   // Функция для получения случайного токена
   const getRandomToken = (): TradingPair | null => {
@@ -63,6 +81,7 @@ const TradingGame: FC = () => {
 
   // Функция для загрузки данных
   const loadData = async (token: TradingPair) => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://api.binance.com/api/v3/klines?symbol=${token.symbol}&interval=1h&limit=100`
@@ -73,31 +92,29 @@ const TradingGame: FC = () => {
       }
 
       const data = await response.json();
-
-      const formattedData: ChartDataPoint[] = data.map((d: any) => {
-        return {
-          time: d[0] / 1000,
-          type: chartType === 'line' ? 'line' : 'candle',
-          ...(chartType === 'line'
-            ? { value: parseFloat(d[4]) }
-            : {
-                open: parseFloat(d[1]),
-                high: parseFloat(d[2]),
-                low: parseFloat(d[3]),
-                close: parseFloat(d[4]),
-              }),
-        };
-      });
+      const formattedData: ChartDataPoint[] = data.map((d: any) => ({
+        time: d[0] / 1000,
+        type: chartType === 'line' ? 'line' : 'candle',
+        ...(chartType === 'line'
+          ? { value: parseFloat(d[4]) }
+          : {
+              open: parseFloat(d[1]),
+              high: parseFloat(d[2]),
+              low: parseFloat(d[3]),
+              close: parseFloat(d[4]),
+            }),
+      }));
 
       const startIndex = Math.floor(Math.random() * (formattedData.length - 30));
       const slicedData = formattedData.slice(startIndex, startIndex + 30);
 
       setFullData(slicedData);
-      setVisibleData([]);
     } catch (error) {
       console.error('Error loading data:', error);
       alert('Ошибка при загрузке данных. Пожалуйста, попробуйте снова.');
       setIsGameStarted(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -107,25 +124,16 @@ const TradingGame: FC = () => {
     setShowPrediction(false);
     setShowNextButton(false);
     setHasPredicted(false);
+    setVisibleData([]);
 
     const token = getRandomToken();
-    if (token) {
-      setCurrentToken(token);
-      await loadData(token);
+    if (!token) {
+      console.error('No available tokens');
+      return;
     }
 
-    // Анимация загрузки данных
-    const animateData = async () => {
-      const visible = fullData.slice(0, -HIDDEN_DAYS);
-      for (let i = 0; i < visible.length; i += 2) {
-        const chunk = visible.slice(0, i + 2);
-        setVisibleData(chunk);
-        await new Promise(resolve => setTimeout(resolve, ANIMATION_SPEED));
-      }
-      setShowPrediction(true);
-    };
-
-    animateData();
+    setCurrentToken(token);
+    await loadData(token);
   };
 
   // Функция для предсказания
@@ -174,11 +182,20 @@ const TradingGame: FC = () => {
   };
 
   // Функция для перехода к следующей игре
-  const nextGame = () => {
+  const nextGame = async () => {
     setShowNextButton(false);
     setHasPredicted(false);
     setVisibleData([]);
-    startGame();
+    setShowPrediction(false);
+    
+    const token = getRandomToken();
+    if (!token) {
+      console.error('No available tokens');
+      return;
+    }
+
+    setCurrentToken(token);
+    await loadData(token);
   };
 
   return (
@@ -194,6 +211,9 @@ const TradingGame: FC = () => {
             onStartGame={startGame}
             isGameStarted={isGameStarted}
           />
+          {!isGameStarted && (
+            <button onClick={startGame}>▶️ Старт</button>
+          )}
 
           {showPrediction && !hasPredicted && (
             <PredictionButtons onPredict={makePredict} disabled={hasPredicted} />

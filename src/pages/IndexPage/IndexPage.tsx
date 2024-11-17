@@ -25,7 +25,7 @@ export const IndexPage: FC = () => {
         </Section>
         
         <Section header="Games">
-          <Link to="/trading">
+          <Link to="/trading-game">
             <Cell subtitle="Trade prediction game">
               Trading Game
             </Cell>
