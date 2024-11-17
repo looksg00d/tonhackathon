@@ -3,8 +3,6 @@ import {
   createChart,
   IChartApi,
   ISeriesApi,
-  LineData,
-  CandlestickData,
   ChartOptions,
   DeepPartial,
   ColorType,

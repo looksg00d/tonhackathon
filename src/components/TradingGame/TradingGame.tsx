@@ -12,6 +12,7 @@ import {
 import './TradingGame.css';
 import BottomNavigation from './BottomNavigation';
 import WebApp from '@twa-dev/sdk';
+import { ScoreService } from '@/services/scoreService';
 
 const TRADING_PAIRS: TradingPair[] = [
   { symbol: 'BTCUSDT', name: 'Bitcoin' },
@@ -238,7 +239,7 @@ const TradingGame: FC = () => {
           lastTimestamp = timestamp;
         } else {
           setVisibleData(fullData);
-          setTimeout(() => {
+          setTimeout(async () => {
             alert(
               `${isCorrect ? '✅ Верно!' : '❌ Неверно!'} Токен: ${
                 currentToken?.name
@@ -251,18 +252,15 @@ const TradingGame: FC = () => {
               
               const user = WebApp.initDataUnsafe.user;
               if (user) {
-                fetch('/api/scores', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    first_name: user.first_name,
-                    last_name: user.last_name || '',
-                    score: newScore,
-                    timestamp: Date.now()
-                  })
-                });
+                try {
+                  await ScoreService.updateScore({
+                    user_id: user.id.toString(),
+                    username: `${user.first_name} ${user.last_name || ''}`,
+                    score: newScore
+                  });
+                } catch (error) {
+                  console.error('Error updating score:', error);
+                }
               }
             }
           }, 500);
