@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import TradingControls from './TradingControls';
 import PredictionButtons from './PredictionButtons';
 import NextGameButton from './NextGameButton';
@@ -194,9 +194,6 @@ const TradingGame: FC = () => {
             onStartGame={startGame}
             isGameStarted={isGameStarted}
           />
-          {!isGameStarted && (
-            <button onClick={startGame}>▶️ Старт</button>
-          )}
 
           {showPrediction && !hasPredicted && (
             <PredictionButtons onPredict={makePredict} disabled={hasPredicted} />
@@ -212,8 +209,8 @@ const TradingGame: FC = () => {
         <ChartComponent
           data={visibleData}
           chartType={chartType}
-          width={800} // Установите нужную ширину
-          height={300} // Установите нужную высоту
+          width={800}
+          height={300}
         />
       </div>
     </div>

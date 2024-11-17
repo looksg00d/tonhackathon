@@ -42,13 +42,13 @@ const TradingControls: React.FC<TradingControlsProps> = ({
       <div className="trading-controls__buttons">
         <Button
           onClick={() => onChangeChartType('line')}
-          disabled={isGameStarted}
+          disabled={false}
         >
           Линия
         </Button>
         <Button
           onClick={() => onChangeChartType('candle')}
-          disabled={isGameStarted}
+          disabled={false}
         >
           Свечи
         </Button>
