@@ -1,0 +1,35 @@
+.trading-game {
+    padding: 16px;
+  }
+  
+  .trading-game__controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .trading-game__buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .trading-game__prediction {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .trading-game__chart {
+    height: 300px;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .trading-game__score {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }

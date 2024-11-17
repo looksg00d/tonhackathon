@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="theme-color" content="#000000"/>
+    <title>Trading Game - Telegram Mini App</title>
+    
+    <!-- Подключаем стили Telegram Mini Apps -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Подключаем библиотеку для графиков -->
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        #root {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Стили для компонента TradingGame */
+        .trading-game {
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .trading-game__controls {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .trading-game__buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .trading-game__select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--tg-theme-hint-color, #999999);
+            border-radius: 8px;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .trading-game__button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .trading-game__button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .trading-game__button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+
+        .trading-game__prediction {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .trading-game__chart {
+            height: 300px;
+            width: 100%;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+        }
+
+        .trading-game__score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--tg-theme-text-color, #000000);
+            padding: 16px;
+        }
+
+        /* Адаптивные стили */
+        @media (max-width: 480px) {
+            #root {
+                padding: 8px;
+            }
+
+            .trading-game__controls {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .trading-game__button {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            .trading-game__chart {
+                height: 250px;
+            }
+        }
+
+        /* Темная тема */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: var(--tg-theme-bg-color, #1c1c1e);
+                color: var(--tg-theme-text-color, #ffffff);
+            }
+
+            .trading-game {
+                background-color: var(--tg-theme-secondary-bg-color, #2c2c2e);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <!-- React приложение будет монтироваться сюда -->
+    </div>
+
+    <!-- Скрипт инициализации Telegram Mini App -->
+    <script>
+        // Инициализация Telegram Mini App
+        window.Telegram.WebApp.ready();
+
+        // Устанавливаем тему
+        const initTheme = () => {
+            document.documentElement.className = window.Telegram.WebApp.colorScheme;
+        };
+
+        window.Telegram.WebApp.onEvent('themeChanged', initTheme);
+        initTheme();
+    </script>
+
+    <!-- Точка входа React приложения -->
+    <script type="module" src="/src/index.tsx"></script>
+</body>
+</html>
