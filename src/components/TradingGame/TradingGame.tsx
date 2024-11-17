@@ -48,17 +48,31 @@ const TradingGame: FC = () => {
   // Эффект для анимации данных при их обновлении
   useEffect(() => {
     if (fullData.length > 0 && !isLoading) {
-      const animateData = async () => {
-        const visible = fullData.slice(0, -HIDDEN_DAYS);
-        for (let i = 0; i < visible.length; i += 2) {
-          const chunk = visible.slice(0, i + 2);
-          setVisibleData(chunk);
-          await new Promise(resolve => setTimeout(resolve, ANIMATION_SPEED));
+      const visible = fullData.slice(0, -HIDDEN_DAYS);
+      let currentIndex = 0;
+      let lastTimestamp = 0;
+      
+      const animate = (timestamp: number) => {
+        if (!lastTimestamp) lastTimestamp = timestamp;
+        
+        const elapsed = timestamp - lastTimestamp;
+        
+        if (elapsed >= ANIMATION_SPEED) {
+          if (currentIndex < visible.length) {
+            const chunk = visible.slice(0, currentIndex + 2);
+            setVisibleData(chunk);
+            currentIndex += 2;
+            lastTimestamp = timestamp;
+          } else {
+            setShowPrediction(true);
+            return;
+          }
         }
-        setShowPrediction(true);
+        
+        requestAnimationFrame(animate);
       };
 
-      animateData();
+      requestAnimationFrame(animate);
     }
   }, [fullData, isLoading]);
 
@@ -84,7 +98,7 @@ const TradingGame: FC = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `https://api.binance.com/api/v3/klines?symbol=${token.symbol}&interval=1h&limit=100`
+        `https://api.binance.com/api/v3/klines?symbol=${token.symbol}&interval=1h&limit=200`
       );
 
       if (!response.ok) {
@@ -162,23 +176,39 @@ const TradingGame: FC = () => {
 
     // Анимация оставшихся данных
     const remainingData = fullData.slice(-HIDDEN_DAYS);
-    for (let i = 0; i < remainingData.length; i++) {
-      const fullVisible = fullData.slice(0, -HIDDEN_DAYS + i + 1);
-      setVisibleData(fullVisible);
-      await new Promise(resolve => setTimeout(resolve, ANIMATION_SPEED * 2));
-    }
+    let currentIndex = 0;
+    let lastTimestamp = 0;
 
-    // Обновление данных после анимации
-    setVisibleData(fullData);
-    setTimeout(() => {
-      alert(
-        `${isCorrect ? '✅ Верно!' : '❌ Неверно!'} Токен: ${
-          currentToken?.name
-        } (${currentToken?.symbol.replace('USDT', '')})`
-      );
-      setShowNextButton(true);
-      setScore(prev => prev + (isCorrect ? 1 : 0));
-    }, 500);
+    const animate = (timestamp: number) => {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      
+      const elapsed = timestamp - lastTimestamp;
+      
+      if (elapsed >= ANIMATION_SPEED * 2) {
+        if (currentIndex < remainingData.length) {
+          const fullVisible = fullData.slice(0, -HIDDEN_DAYS + currentIndex + 1);
+          setVisibleData(fullVisible);
+          currentIndex++;
+          lastTimestamp = timestamp;
+        } else {
+          setVisibleData(fullData);
+          setTimeout(() => {
+            alert(
+              `${isCorrect ? '✅ Верно!' : '❌ Неверно!'} Токен: ${
+                currentToken?.name
+              } (${currentToken?.symbol.replace('USDT', '')})`
+            );
+            setShowNextButton(true);
+            setScore(prev => prev + (isCorrect ? 1 : 0));
+          }, 500);
+          return;
+        }
+      }
+      
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
   };
 
   // Функция для перехода к следующей игре
@@ -203,17 +233,11 @@ const TradingGame: FC = () => {
       <div className="trading-game">
         <div className="trading-game__controls">
           <TradingControls
-            tradingPairs={TRADING_PAIRS}
-            selectedPair={currentToken}
-            onSelectPair={setCurrentToken}
             chartType={chartType}
             onChangeChartType={setChartType}
             onStartGame={startGame}
             isGameStarted={isGameStarted}
           />
-          {!isGameStarted && (
-            <button onClick={startGame}>▶️ Старт</button>
-          )}
 
           {showPrediction && !hasPredicted && (
             <PredictionButtons onPredict={makePredict} disabled={hasPredicted} />

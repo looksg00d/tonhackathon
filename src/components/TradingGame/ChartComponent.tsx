@@ -20,26 +20,41 @@ interface ChartComponentProps {
 
 const chartOptions: DeepPartial<ChartOptions> = {
   layout: {
-    textColor: 'black',
+    textColor: '#333',
     background: {
       type: ColorType.Solid,
-      color: 'white',
+      color: '#ffffff',
+    },
+  },
+  grid: {
+    vertLines: { color: '#f0f3fa' },
+    horzLines: { color: '#f0f3fa' },
+  },
+  crosshair: {
+    mode: 0,
+    vertLine: {
+      width: 1,
+      color: '#2962FF',
+      style: 2, // LineStyle.Dashed
+    },
+    horzLine: {
+      width: 1,
+      color: '#2962FF',
+      style: 2,
     },
   },
   rightPriceScale: {
     visible: true,
     borderVisible: false,
+    scaleMargins: {
+      top: 0.1,
+      bottom: 0.1,
+    },
   },
   timeScale: {
     timeVisible: true,
     secondsVisible: false,
-  },
-  grid: {
-    vertLines: { visible: false },
-    horzLines: { visible: false },
-  },
-  crosshair: {
-    mode: 0, // CrosshairMode.Normal
+    borderVisible: false,
   },
 };
 
@@ -54,8 +69,10 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, chartType, width,
     if (chartContainerRef.current) {
       chartRef.current = createChart(chartContainerRef.current, { ...chartOptions, width, height });
 
-      lineSeriesRef.current = chartRef.current.addLineSeries({
-        color: '#2962FF',
+      lineSeriesRef.current = chartRef.current.addAreaSeries({
+        lineColor: '#2962FF',
+        topColor: 'rgba(41, 98, 255, 0.3)',
+        bottomColor: 'rgba(41, 98, 255, 0.0)',
         lineWidth: 2,
         visible: chartType === 'line',
       });
@@ -63,14 +80,23 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, chartType, width,
       candleSeriesRef.current = chartRef.current.addCandlestickSeries({
         upColor: '#26a69a',
         downColor: '#ef5350',
+        borderVisible: false,
+        wickUpColor: '#26a69a',
+        wickDownColor: '#ef5350',
         visible: chartType === 'candle',
       });
 
       predictionLineRef.current = chartRef.current.addLineSeries({
         color: '#808080',
         lineWidth: 1,
-        lineStyle: 2, // LineStyle.Dotted
+        lineStyle: 2,
         visible: false,
+      });
+
+      chartRef.current.subscribeCrosshairMove((param) => {
+        if (param.point) {
+          // Можно добавить тултип или другие эффекты при наведении
+        }
       });
 
       const handleResize = () => {
@@ -123,7 +149,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, chartType, width,
     }
   }, [data, chartType]);
 
-  return <div ref={chartContainerRef} />;
+  return (
+    <div className="chart-container">
+      <div ref={chartContainerRef} />
+    </div>
+  );
 };
 
 export default ChartComponent;

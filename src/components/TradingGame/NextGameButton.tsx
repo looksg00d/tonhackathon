@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@telegram-apps/telegram-ui';
 
 interface NextGameButtonProps {
   onNextGame: () => void;
@@ -7,7 +6,10 @@ interface NextGameButtonProps {
 
 const NextGameButton: React.FC<NextGameButtonProps> = ({ onNextGame }) => {
   return (
-    <Button onClick={onNextGame}>▶️ Следующий</Button>
+    <button onClick={onNextGame} className="next-game-btn">
+      <span className="next-game-btn__text">Next Game</span>
+      <span className="next-game-btn__shine"></span>
+    </button>
   );
 };
 

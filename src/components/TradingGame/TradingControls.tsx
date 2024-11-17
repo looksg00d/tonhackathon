@@ -1,11 +1,8 @@
 import React from 'react';
-import { Button, Select } from '@telegram-apps/telegram-ui';
-import { TradingPair, ChartType } from './types';
+import { Button } from '@telegram-apps/telegram-ui';
+import { ChartType } from './types';
 
 interface TradingControlsProps {
-  tradingPairs: TradingPair[];
-  selectedPair: TradingPair | null;
-  onSelectPair: (pair: TradingPair | null) => void;
   chartType: ChartType;
   onChangeChartType: (type: ChartType) => void;
   onStartGame: () => void;
@@ -13,9 +10,6 @@ interface TradingControlsProps {
 }
 
 const TradingControls: React.FC<TradingControlsProps> = ({
-  tradingPairs,
-  selectedPair,
-  onSelectPair,
   chartType,
   onChangeChartType,
   onStartGame,
@@ -23,39 +17,35 @@ const TradingControls: React.FC<TradingControlsProps> = ({
 }) => {
   return (
     <div className="trading-controls">
-      <Select
-        value={selectedPair?.symbol || 'BTCUSDT'}
-        onChange={(e) =>
-          onSelectPair(
-            tradingPairs.find((pair) => pair.symbol === e.target.value) || null
-          )
-        }
-        disabled={isGameStarted}
-      >
-        {tradingPairs.map((pair) => (
-          <option key={pair.symbol} value={pair.symbol}>
-            {pair.name} ({pair.symbol.replace('USDT', '')})
-          </option>
-        ))}
-      </Select>
-
       <div className="trading-controls__buttons">
-        <Button
+        <button
           onClick={() => onChangeChartType('line')}
-          disabled={false}
+          className={`chart-type-btn ${chartType === 'line' ? 'active' : ''}`}
+          aria-label="Line Chart"
         >
-          Линия
-        </Button>
-        <Button
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.5 18.5L9.5 12.5L14.5 17.5L22 6.5" fill="none" stroke="currentColor" strokeWidth="2"/>
+          </svg>
+        </button>
+        <button
           onClick={() => onChangeChartType('candle')}
-          disabled={false}
+          className={`chart-type-btn ${chartType === 'candle' ? 'active' : ''}`}
+          aria-label="Candle Chart"
         >
-          Свечи
-        </Button>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="8" width="2" height="8" />
+            <rect x="11" y="4" width="2" height="16" />
+            <rect x="16" y="10" width="2" height="6" />
+          </svg>
+        </button>
       </div>
 
       {!isGameStarted && (
-        <Button onClick={onStartGame}>▶️ Старт</Button>
+        <button onClick={onStartGame} className="start-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
       )}
     </div>
   );
