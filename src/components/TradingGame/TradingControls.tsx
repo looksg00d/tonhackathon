@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@telegram-apps/telegram-ui';
 import { ChartType } from './types';
 
 interface TradingControlsProps {
