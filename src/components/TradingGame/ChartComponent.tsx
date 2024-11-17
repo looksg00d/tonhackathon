@@ -69,10 +69,16 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, chartType, width,
     if (chartContainerRef.current) {
       chartRef.current = createChart(chartContainerRef.current, { ...chartOptions, width, height });
 
-      lineSeriesRef.current = chartRef.current.addAreaSeries({
-        lineColor: '#2962FF',
-        topColor: 'rgba(41, 98, 255, 0.3)',
-        bottomColor: 'rgba(41, 98, 255, 0.0)',
+      predictionLineRef.current = chartRef.current.addLineSeries({
+        color: '#808080',
+        lineWidth: 1,
+        lineStyle: 2,
+        visible: false,
+      });
+
+
+      lineSeriesRef.current = chartRef.current.addLineSeries({
+        color: '#2962FF', // Ensure 'color' is specified for LineSeries
         lineWidth: 2,
         visible: chartType === 'line',
       });
@@ -85,14 +91,6 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, chartType, width,
         wickDownColor: '#ef5350',
         visible: chartType === 'candle',
       });
-
-      predictionLineRef.current = chartRef.current.addLineSeries({
-        color: '#808080',
-        lineWidth: 1,
-        lineStyle: 2,
-        visible: false,
-      });
-
       chartRef.current.subscribeCrosshairMove((param) => {
         if (param.point) {
           // Можно добавить тултип или другие эффекты при наведении
