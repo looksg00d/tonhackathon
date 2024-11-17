@@ -42,6 +42,8 @@ const TradingGame: FC = () => {
   const [score, setScore] = useState(0);
   const [hasPredicted, setHasPredicted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [demoData, setDemoData] = useState<ChartDataPoint[]>([]);
+  const [isDemoLoading, setIsDemoLoading] = useState(true);
 
   const HIDDEN_DAYS = 7;
   const ANIMATION_SPEED = 50;
@@ -132,6 +134,49 @@ const TradingGame: FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Функция для загрузки демо-данных BTC
+  const loadDemoData = async () => {
+    try {
+      const response = await fetch(
+        'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=100'
+      );
+      const data = await response.json();
+      
+      const formattedData: ChartDataPoint[] = data.map((item: any) => ({
+        type: chartType,
+        time: item[0] / 1000,
+        ...(chartType === 'line'
+          ? {
+              value: parseFloat(item[4]), // Цена закрытия
+            }
+          : {
+              open: parseFloat(item[1]),
+              high: parseFloat(item[2]),
+              low: parseFloat(item[3]),
+              close: parseFloat(item[4]),
+            }),
+      }));
+
+      setDemoData(formattedData);
+      setIsDemoLoading(false);
+    } catch (error) {
+      console.error('Error loading demo data:', error);
+      setIsDemoLoading(false);
+    }
+  };
+
+  // Эффект для загрузки демо-данных при первом рендере
+  useEffect(() => {
+    if (!isGameStarted) {
+      loadDemoData();
+      
+      // Обновляем данные каждую минуту
+      const interval = setInterval(loadDemoData, 60000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isGameStarted, chartType]);
 
   // Функция для запуска игры
   const startGame = async () => {
@@ -229,6 +274,14 @@ const TradingGame: FC = () => {
     await loadData(token);
   };
 
+  // Вспомогательная функция для получения цены из точки данных
+  const getPriceFromDataPoint = (dataPoint: ChartDataPoint): number => {
+    if (dataPoint.type === 'line') {
+      return dataPoint.value;
+    }
+    return dataPoint.close;
+  };
+
   return (
     <div>
       <div className="trading-game">
@@ -251,12 +304,35 @@ const TradingGame: FC = () => {
           <ScoreDisplay score={score} />
         </div>
 
-        <ChartComponent
-          data={visibleData}
-          chartType={chartType}
-          width={800}
-          height={300}
-        />
+        <div className="chart-container">
+          {!isGameStarted ? (
+            isDemoLoading ? (
+              <div className="demo-loading">Loading BTC/USDT...</div>
+            ) : (
+              <ChartComponent
+                data={demoData}
+                chartType={chartType}
+                height={300}
+              />
+            )
+          ) : (
+            <ChartComponent
+              data={visibleData}
+              chartType={chartType}
+              height={300}
+            />
+          )}
+          {!isGameStarted && !isDemoLoading && (
+            <div className="demo-pair-info">
+              <span className="demo-pair-name">BTC/USDT Live Demo</span>
+              <span className="demo-pair-price">
+                {demoData.length > 0 && 
+                  `$${getPriceFromDataPoint(demoData[demoData.length - 1]).toLocaleString()}`
+                }
+              </span>
+            </div>
+          )}
+        </div>
       </div>
       <BottomNavigation />
     </div>

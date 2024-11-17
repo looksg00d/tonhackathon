@@ -14,8 +14,8 @@ import { ChartType, ChartDataPoint } from './types';
 interface ChartComponentProps {
   data: ChartDataPoint[];
   chartType: ChartType;
-  width: number;
   height: number;
+  width?: number;
 }
 
 const chartOptions: DeepPartial<ChartOptions> = {
@@ -50,63 +50,89 @@ const chartOptions: DeepPartial<ChartOptions> = {
       top: 0.1,
       bottom: 0.1,
     },
+    alignLabels: true,
   },
   timeScale: {
     timeVisible: true,
     secondsVisible: false,
     borderVisible: false,
+    rightOffset: 0,
+    barSpacing: 20,
+    fixLeftEdge: true,
+    fixRightEdge: true,
   },
 };
 
-const ChartComponent: React.FC<ChartComponentProps> = ({ data, chartType, width, height }) => {
+const ChartComponent: React.FC<ChartComponentProps> = ({ 
+  data, 
+  chartType, 
+  height,
+  width = window.innerWidth
+}) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const lineSeriesRef = useRef<ISeriesApi<'Line'> | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
-  const predictionLineRef = useRef<ISeriesApi<'Line'> | null>(null);
 
   useEffect(() => {
     if (chartContainerRef.current) {
-      chartRef.current = createChart(chartContainerRef.current, { ...chartOptions, width, height });
-
-      predictionLineRef.current = chartRef.current.addLineSeries({
-        color: '#808080',
-        lineWidth: 1,
-        lineStyle: 2,
-        visible: false,
-      });
-
-
-      lineSeriesRef.current = chartRef.current.addLineSeries({
-        color: '#2962FF', // Ensure 'color' is specified for LineSeries
-        lineWidth: 2,
-        visible: chartType === 'line',
-      });
-
-      candleSeriesRef.current = chartRef.current.addCandlestickSeries({
-        upColor: '#26a69a',
-        downColor: '#ef5350',
-        borderVisible: false,
-        wickUpColor: '#26a69a',
-        wickDownColor: '#ef5350',
-        visible: chartType === 'candle',
-      });
-      chartRef.current.subscribeCrosshairMove((param) => {
-        if (param.point) {
-          // Можно добавить тултип или другие эффекты при наведении
+      chartRef.current = createChart(chartContainerRef.current, {
+        ...chartOptions,
+        width: chartContainerRef.current.clientWidth,
+        height,
+        timeScale: {
+          ...chartOptions.timeScale,
+          rightOffset: 5,
+          barSpacing: 20,
+          fixLeftEdge: true,
+          fixRightEdge: true,
+        },
+        rightPriceScale: {
+          autoScale: true,
+          scaleMargins: {
+            top: 0.1,
+            bottom: 0.1
+          },
         }
       });
 
+      if (chartRef.current) {
+        lineSeriesRef.current = chartRef.current.addLineSeries({
+          color: '#2962FF',
+          lineWidth: 2,
+          visible: chartType === 'line',
+        });
+
+        candleSeriesRef.current = chartRef.current.addCandlestickSeries({
+          upColor: '#26a69a',
+          downColor: '#ef5350',
+          borderVisible: false,
+          wickUpColor: '#26a69a',
+          wickDownColor: '#ef5350',
+          visible: chartType === 'candle',
+        });
+
+        if (chartType === 'line' && lineSeriesRef.current) {
+          lineSeriesRef.current.setData(data);
+          chartRef.current.timeScale().fitContent();
+        } else if (chartType === 'candle' && candleSeriesRef.current) {
+          candleSeriesRef.current.setData(data);
+          chartRef.current.timeScale().fitContent();
+        }
+      }
+
       const handleResize = () => {
         if (chartRef.current && chartContainerRef.current) {
-          chartRef.current.applyOptions({
-            width: chartContainerRef.current.clientWidth,
+          const containerWidth = chartContainerRef.current.clientWidth;
+          chartRef.current.applyOptions({ 
+            width: containerWidth,
+            height: height 
           });
+          chartRef.current.timeScale().fitContent();
         }
       };
 
       window.addEventListener('resize', handleResize);
-
       return () => {
         window.removeEventListener('resize', handleResize);
         if (chartRef.current) {
@@ -114,38 +140,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ data, chartType, width,
         }
       };
     }
-  }, [chartType, width, height]);
-
-  useEffect(() => {
-    if (chartType === 'line' && lineSeriesRef.current) {
-      const lineData: LineData[] = data.map((d) => ({
-        time: d.time,
-        value: d.type === 'line' ? d.value : d.close,
-      }));
-      lineSeriesRef.current.setData(lineData);
-    } else if (chartType === 'candle' && candleSeriesRef.current) {
-      const candleData: CandlestickData[] = data.map((d) => {
-        if (d.type === 'candle') {
-          return {
-            time: d.time,
-            open: d.open,
-            high: d.high,
-            low: d.low,
-            close: d.close,
-          };
-        }
-        // Обработка данных для типа 'line', возможно, преобразование их в 'candle'
-        return {
-          time: d.time,
-          open: d.value,
-          high: d.value,
-          low: d.value,
-          close: d.value,
-        };
-      });
-      candleSeriesRef.current.setData(candleData);
-    }
-  }, [data, chartType]);
+  }, [data, chartType, width, height]);
 
   return (
     <div className="chart-container">
