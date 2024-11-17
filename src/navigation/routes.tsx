@@ -1,11 +1,11 @@
 import type { ComponentType, JSX } from 'react';
-import { TradingGame } from '@/components/TradingGame/TradingGame';
 
 import { IndexPage } from '@/pages/IndexPage/IndexPage';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
+import TradingGame from '@/components/TradingGame/TradingGame';
 
 interface Route {
   path: string;
@@ -42,24 +42,5 @@ export const routes: Route[] = [
       </svg>
     ),
   },
-  {
-    path: '/trading',
-    Component: TradingGame,
-    title: 'Trading Game',
-    icon: (
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width="100%" 
-        height="100%" 
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-      >
-        <path d="M3 3v18h18" />
-        <path d="M3 12h18" />
-        <path d="M7 8l5-5 5 5" />
-        <path d="M7 16l5 5 5-5" />
-      </svg>
-    )
-  }
+  { path: '/trading-game', Component: TradingGame, title: 'Trading Game' },
 ];

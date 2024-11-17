@@ -1,35 +1,39 @@
 .trading-game {
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .trading-game__controls {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-bottom: 16px;
+    align-items: center;
+    margin-bottom: 20px;
   }
   
-  .trading-game__buttons {
+  .trading-controls {
     display: flex;
-    gap: 8px;
-    justify-content: center;
+    align-items: center;
+    gap: 10px;
   }
   
-  .trading-game__prediction {
+  .trading-controls__buttons {
     display: flex;
-    gap: 8px;
-    justify-content: center;
+    gap: 10px;
+  }
+  
+  .prediction-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .score-display {
+    margin-top: 10px;
+    font-size: 1.2em;
   }
   
   .trading-game__chart {
+    width: 800px;
     height: 300px;
-    width: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .trading-game__score {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
   }

@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
 import { StrictMode } from 'react';
+import ReactDOM from 'react-dom/client';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { HashRouter } from 'react-router-dom';
 
