@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@telegram-apps/telegram-ui';
 import { PredictionType } from './types';
 
 interface PredictionButtonsProps {
