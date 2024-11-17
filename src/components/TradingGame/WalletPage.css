@@ -1,0 +1,16 @@
+.wallet-page__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: 20px;
+  }
+  
+  .wallet-page__button {
+    margin-top: 20px;
+  }
+  
+  .wallet-page__button-connected {
+    margin: 20px;
+  }

@@ -1,11 +1,11 @@
 import type { ComponentType, JSX } from 'react';
 
-import { IndexPage } from '@/pages/IndexPage/IndexPage';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
 import TradingGame from '@/components/TradingGame/TradingGame';
+import { WalletPage } from '@/components/TradingGame/WalletPage';
 
 interface Route {
   path: string;
@@ -15,7 +15,8 @@ interface Route {
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
+  { path: '/', Component: TradingGame, title: 'Trading Game' },
+  { path: '/wallet', Component: WalletPage, title: 'Wallet' },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
@@ -42,5 +43,4 @@ export const routes: Route[] = [
       </svg>
     ),
   },
-  { path: '/trading-game', Component: TradingGame, title: 'Trading Game' },
 ];

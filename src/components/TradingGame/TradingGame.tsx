@@ -11,6 +11,7 @@ import {
   ChartDataPoint 
 } from './types';
 import './TradingGame.css';
+import BottomNavigation from './BottomNavigation';
 
 const TRADING_PAIRS: TradingPair[] = [
   { symbol: 'BTCUSDT', name: 'Bitcoin' },
@@ -257,6 +258,7 @@ const TradingGame: FC = () => {
           height={300}
         />
       </div>
+      <BottomNavigation />
     </div>
   );
 };
