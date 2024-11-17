@@ -1,26 +1,51 @@
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Page } from '@/components/Page.tsx';
 import { List, Section, Cell, Text } from '@telegram-apps/telegram-ui';
 import BottomNavigation from '@/components/TradingGame/BottomNavigation';
 import './LeaderboardPage.css';
 
+interface LeaderboardEntry {
+  first_name: string;
+  last_name?: string;
+  score: number;
+}
+
 export const LeaderboardPage: FC = () => {
-  // Здесь можно добавить состояние для хранения данных лидерборда
-  const leaderboardData = [
-    { rank: 1, name: 'Player 1', score: 1000 },
-    { rank: 2, name: 'Player 2', score: 850 },
-    { rank: 3, name: 'Player 3', score: 700 },
-  ];
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await fetch('/api/leaderboard');
+        const data = await response.json();
+        
+        const sortedData = data
+          .sort((a: LeaderboardEntry, b: LeaderboardEntry) => b.score - a.score)
+          .slice(0, 100);
+        
+        setLeaderboardData(sortedData);
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+      }
+    };
+
+    fetchLeaderboard();
+    const interval = setInterval(fetchLeaderboard, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Page>
       <List>
         <Section header="Лидерборд">
-          {leaderboardData.map((player) => (
-            <Cell key={player.rank}>
+          {leaderboardData.map((player, index) => (
+            <Cell key={index}>
               <div className="leaderboard-item">
-                <Text weight="1">#{player.rank}</Text>
-                <Text>{player.name}</Text>
+                <Text weight="1">#{index + 1}</Text>
+                <Text>
+                  {player.first_name}
+                  {player.last_name ? ` ${player.last_name}` : ''}
+                </Text>
                 <Text className="score">{player.score}</Text>
               </div>
             </Cell>

@@ -2,7 +2,6 @@ import { FC, useState, useEffect } from 'react';
 import TradingControls from './TradingControls';
 import PredictionButtons from './PredictionButtons';
 import NextGameButton from './NextGameButton';
-import ScoreDisplay from './ScoreDisplay';
 import ChartComponent from './ChartComponent';
 import { 
   TradingPair, 
@@ -12,6 +11,7 @@ import {
 } from './types';
 import './TradingGame.css';
 import BottomNavigation from './BottomNavigation';
+import WebApp from '@twa-dev/sdk';
 
 const TRADING_PAIRS: TradingPair[] = [
   { symbol: 'BTCUSDT', name: 'Bitcoin' },
@@ -245,7 +245,26 @@ const TradingGame: FC = () => {
               } (${currentToken?.symbol.replace('USDT', '')})`
             );
             setShowNextButton(true);
-            setScore(prev => prev + (isCorrect ? 1 : 0));
+            if (isCorrect) {
+              const newScore = score + 1;
+              setScore(newScore);
+              
+              const user = WebApp.initDataUnsafe.user;
+              if (user) {
+                fetch('/api/scores', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    first_name: user.first_name,
+                    last_name: user.last_name || '',
+                    score: newScore,
+                    timestamp: Date.now()
+                  })
+                });
+              }
+            }
           }, 500);
           return;
         }
