@@ -1,0 +1,9 @@
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .leaderboard-item .score {
+    margin-left: auto;
+  }
