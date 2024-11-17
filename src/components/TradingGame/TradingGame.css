@@ -2,26 +2,30 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 80px;
+    justify-content: center;
+    min-height: calc(100vh - 140px);
     width: 90%;
     max-width: 800px;
     margin: 0 auto;
     padding: 16px;
     box-sizing: border-box;
+    position: relative;
   }
   
   .trading-game__controls {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    width: 100%;
   }
   
   .trading-controls {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
     gap: 20px;
+    padding: 8px;
   }
   
   .trading-controls__buttons {
@@ -68,14 +72,13 @@
   
   .chart-container {
     position: relative;
-    background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 0;
-    margin: 20px auto;
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
+    background: var(--tg-theme-bg-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 16px 0;
   }
   
   @keyframes fadeIn {
@@ -126,7 +129,11 @@
     transform: scale(0.95);
   }
   
+  .start-game-btn,
   .next-game-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     width: auto;
     min-width: 160px;
@@ -145,6 +152,7 @@
     box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
   }
   
+  .start-game-btn__text,
   .next-game-btn__text {
     position: relative;
     z-index: 1;
@@ -154,6 +162,7 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
   
+  .start-game-btn__shine,
   .next-game-btn__shine {
     position: absolute;
     top: 0;
@@ -169,15 +178,18 @@
     transition: 0.5s;
   }
   
+  .start-game-btn:hover,
   .next-game-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
   }
   
+  .start-game-btn:hover .start-game-btn__shine,
   .next-game-btn:hover .next-game-btn__shine {
     left: 100%;
   }
   
+  .start-game-btn:active,
   .next-game-btn:active {
     transform: translateY(0);
     box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
@@ -214,63 +226,6 @@
   
   .chart-type-btn:hover svg {
     transform: scale(1.2);
-  }
-  
-  .start-game-btn {
-    position: relative;
-    width: auto;
-    min-width: 160px;
-    height: 48px;
-    padding: 0 24px;
-    background: linear-gradient(45deg, rgba(38, 166, 154, 1), rgba(38, 166, 154, 0.8));
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
-  }
-  
-  .start-game-btn__text {
-    position: relative;
-    z-index: 1;
-    background: linear-gradient(45deg, #ffffff, #f0f0f0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  .start-game-btn__shine {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
-    transition: 0.5s;
-  }
-  
-  .start-game-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
-  }
-  
-  .start-game-btn:hover .start-game-btn__shine {
-    left: 100%;
-  }
-  
-  .start-game-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
   }
   
   .bottom-navigation {
@@ -383,4 +338,70 @@
     color: var(--tg-theme-hint-color);
     font-family: monospace;
     font-size: 14px;
+  }
+  
+  .trading-game__score {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--tg-theme-bg-color, rgba(255, 255, 255, 0.9));
+    padding: 6px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--tg-theme-text-color);
+    z-index: 10;
+  }
+  
+  .trading-game__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+  }
+  
+  .trading-game__score {
+    background: var(--tg-theme-bg-color, rgba(255, 255, 255, 0.9));
+    padding: 6px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--tg-theme-text-color);
+  }
+  
+  .trading-game__score-icon {
+    color: #26A69A;
+  }
+  
+  /* Уменьшаем размер контролов */
+  .trading-controls {
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .chart-type-btn {
+    padding: 6px;
+    /* остальные стили остаются */
+  }
+  
+  /* Медиа-запрос для маленьких экранов */
+  @media (max-height: 600px) {
+    .trading-game {
+      min-height: auto;
+      padding-bottom: 140px;
+    }
+    
+    .start-game-btn {
+      position: absolute;
+      bottom: 80px;
+    }
   }

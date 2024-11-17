@@ -18,9 +18,8 @@ const TradingControls: React.FC<TradingControlsProps> = ({
     <div className="trading-controls">
       <div className="trading-controls__buttons">
         <button
-          onClick={() => onChangeChartType('line')}
-          className={`chart-type-btn ${chartType === 'line' ? 'active' : ''}`}
-          aria-label="Line Chart"
+          className="chart-type-btn"
+          onClick={() => onChangeChartType(chartType === 'line' ? 'candle' : 'line')}
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
             <path d="M3.5 18.5L9.5 12.5L14.5 17.5L22 6.5" fill="none" stroke="currentColor" strokeWidth="2"/>
@@ -40,9 +39,9 @@ const TradingControls: React.FC<TradingControlsProps> = ({
       </div>
 
       {!isGameStarted && (
-        <button onClick={onStartGame} className="start-game-btn">
-          <span className="start-game-btn__text">Start</span>
-          <span className="start-game-btn__shine"></span>
+        <button className="start-game-btn" onClick={onStartGame}>
+          <span className="start-game-btn__text">Start Game</span>
+          <div className="start-game-btn__shine"></div>
         </button>
       )}
     </div>

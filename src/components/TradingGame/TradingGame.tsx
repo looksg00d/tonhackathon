@@ -283,57 +283,59 @@ const TradingGame: FC = () => {
   };
 
   return (
-    <div>
-      <div className="trading-game">
-        <div className="trading-game__controls">
-          <TradingControls
-            chartType={chartType}
-            onChangeChartType={setChartType}
-            onStartGame={startGame}
-            isGameStarted={isGameStarted}
-          />
-
-          {showPrediction && !hasPredicted && (
-            <PredictionButtons onPredict={makePredict} disabled={hasPredicted} />
-          )}
-
-          {showNextButton && (
-            <NextGameButton onNextGame={nextGame} />
-          )}
-
-          <ScoreDisplay score={score} />
+    <div className="trading-game">
+      <div className="trading-game__header">
+        <div className="trading-game__score">
+          <span className="trading-game__score-icon">🎯</span>
+          {score}
         </div>
-
-        <div className="chart-container">
-          {!isGameStarted ? (
-            isDemoLoading ? (
-              <div className="demo-loading">Loading BTC/USDT...</div>
-            ) : (
-              <ChartComponent
-                data={demoData}
-                chartType={chartType}
-                height={300}
-              />
-            )
+      </div>
+      
+      <TradingControls
+        chartType={chartType}
+        onChangeChartType={setChartType}
+        onStartGame={startGame}
+        isGameStarted={isGameStarted}
+      />
+      
+      <div className="chart-container">
+        {!isGameStarted ? (
+          isDemoLoading ? (
+            <div className="demo-loading">Loading BTC/USDT...</div>
           ) : (
             <ChartComponent
-              data={visibleData}
+              data={demoData}
               chartType={chartType}
               height={300}
             />
-          )}
-          {!isGameStarted && !isDemoLoading && (
-            <div className="demo-pair-info">
-              <span className="demo-pair-name">BTC/USDT Live Demo</span>
-              <span className="demo-pair-price">
-                {demoData.length > 0 && 
-                  `$${getPriceFromDataPoint(demoData[demoData.length - 1]).toLocaleString()}`
-                }
-              </span>
-            </div>
-          )}
-        </div>
+          )
+        ) : (
+          <ChartComponent
+            data={visibleData}
+            chartType={chartType}
+            height={300}
+          />
+        )}
+        {!isGameStarted && !isDemoLoading && (
+          <div className="demo-pair-info">
+            <span className="demo-pair-name">BTC/USDT Live Demo</span>
+            <span className="demo-pair-price">
+              {demoData.length > 0 && 
+                `$${getPriceFromDataPoint(demoData[demoData.length - 1]).toLocaleString()}`
+              }
+            </span>
+          </div>
+        )}
       </div>
+      
+      {showPrediction && !hasPredicted && (
+        <PredictionButtons onPredict={makePredict} disabled={hasPredicted} />
+      )}
+
+      {showNextButton && (
+        <NextGameButton onNextGame={nextGame} />
+      )}
+
       <BottomNavigation />
     </div>
   );
