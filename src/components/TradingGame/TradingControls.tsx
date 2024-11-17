@@ -41,10 +41,9 @@ const TradingControls: React.FC<TradingControlsProps> = ({
       </div>
 
       {!isGameStarted && (
-        <button onClick={onStartGame} className="start-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7z" />
-          </svg>
+        <button onClick={onStartGame} className="start-game-btn">
+          <span className="start-game-btn__text">Start</span>
+          <span className="start-game-btn__shine"></span>
         </button>
       )}
     </div>
