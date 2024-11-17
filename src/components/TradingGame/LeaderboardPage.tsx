@@ -19,7 +19,7 @@ export const LeaderboardPage: FC = () => {
           {leaderboardData.map((player) => (
             <Cell key={player.rank}>
               <div className="leaderboard-item">
-                <Text weight="bold">#{player.rank}</Text>
+                <Text weight="1">#{player.rank}</Text>
                 <Text>{player.name}</Text>
                 <Text className="score">{player.score}</Text>
               </div>
