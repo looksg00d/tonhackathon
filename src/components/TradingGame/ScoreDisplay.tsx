@@ -1,8 +1,5 @@
 import React from 'react';
 
-interface ScoreDisplayProps {
-  score: number;
-}
 
 const ScoreDisplay: React.FC<{ score: number }> = ({ score }) => {
   return (
