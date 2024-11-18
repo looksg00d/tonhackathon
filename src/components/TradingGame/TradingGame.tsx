@@ -12,7 +12,7 @@ import {
 import './TradingGame.css';
 import BottomNavigation from './BottomNavigation';
 import WebApp from '@twa-dev/sdk';
-import { ScoreService } from '@/services/scoreService';
+
 
 const TRADING_PAIRS: TradingPair[] = [
   { symbol: 'BTCUSDT', name: 'Bitcoin' },
@@ -249,15 +249,25 @@ const TradingGame: FC = () => {
             if (isCorrect) {
               const newScore = score + 1;
               setScore(newScore);
-              
+
               const user = WebApp.initDataUnsafe.user;
               if (user) {
                 try {
-                  await ScoreService.updateScore({
-                    user_id: user.id.toString(),
-                    username: `${user.first_name} ${user.last_name || ''}`,
-                    score: newScore
+                  const response = await fetch('/api/updateScore', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      user_id: user.id.toString(),
+                      username: `${user.first_name} ${user.last_name || ''}`,
+                      score: newScore,
+                    }),
                   });
+
+                  if (!response.ok) {
+                    throw new Error('Failed to update score');
+                  }
                 } catch (error) {
                   console.error('Error updating score:', error);
                 }
@@ -297,6 +307,18 @@ const TradingGame: FC = () => {
       return dataPoint.value;
     }
     return dataPoint.close;
+  };
+
+  const validateTelegramUser = (initData: string) => {
+    try {
+      // Проверка подписи данных от Telegram
+      const data = new URLSearchParams(initData);
+      // Добавьте здесь валидацию hash
+      return true;
+    } catch (error) {
+      console.error('Invalid Telegram data:', error);
+      return false;
+    }
   };
 
   return (

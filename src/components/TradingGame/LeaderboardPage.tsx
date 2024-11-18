@@ -3,7 +3,6 @@ import { Page } from '@/components/Page.tsx';
 import { List, Section, Cell, Text } from '@telegram-apps/telegram-ui';
 import BottomNavigation from '@/components/TradingGame/BottomNavigation';
 import './LeaderboardPage.css';
-import { ScoreService } from '../../services/scoreService';
 
 interface LeaderboardEntry {
   first_name: string;
@@ -17,12 +16,18 @@ export const LeaderboardPage: FC = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const data = await ScoreService.getLeaderboard();
-        setLeaderboardData(data.map(entry => ({
-          first_name: entry.username.split(' ')[0],
-          last_name: entry.username.split(' ')[1] || '',
-          score: entry.score
-        })));
+        const response = await fetch('/api/getLeaderboard');
+        if (!response.ok) {
+          throw new Error('Failed to fetch leaderboard');
+        }
+        const data = await response.json();
+        setLeaderboardData(
+          data.map((entry: any) => ({
+            first_name: entry.username.split(' ')[0],
+            last_name: entry.username.split(' ')[1] || '',
+            score: entry.score,
+          }))
+        );
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
       }

@@ -1,10 +1,19 @@
 import { Pool } from 'pg';
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://looksgood:k4sUygEP7cnjcmtE4LIHfB9V0OLpKskJ@dpg-cst6fs52ng1s73as2ing-a.frankfurt-postgres.render.com/telegram_app_pwm4',
+  connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
+});
+
+pool.on('connect', () => {
+  console.log('Connected to the database');
+});
+
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
 });
 
 export default pool;  
