@@ -40,22 +40,27 @@ export const LeaderboardPage: FC = () => {
 
   return (
     <Page>
-      <List>
-        <Section header="Лидерборд">
-          {leaderboardData.map((player, index) => (
-            <Cell key={index}>
-              <div className="leaderboard-item">
-                <Text weight="1">#{index + 1}</Text>
-                <Text>
-                  {player.first_name}
-                  {player.last_name ? ` ${player.last_name}` : ''}
-                </Text>
-                <Text className="score">{player.score}</Text>
-              </div>
-            </Cell>
-          ))}
-        </Section>
-      </List>
+      <div className="leaderboard-container">
+        <div className="coming-soon-overlay">
+          <h1 className="coming-soon-text">SOON</h1>
+        </div>
+        <List>
+          <Section>
+            {leaderboardData.map((player, index) => (
+              <Cell key={index}>
+                <div className="leaderboard-item">
+                  <Text weight="1">#{index + 1}</Text>
+                  <Text>
+                    {player.first_name}
+                    {player.last_name ? ` ${player.last_name}` : ''}
+                  </Text>
+                  <Text className="score">{player.score}</Text>
+                </div>
+              </Cell>
+            ))}
+          </Section>
+        </List>
+      </div>
       <BottomNavigation />
     </Page>
   );
