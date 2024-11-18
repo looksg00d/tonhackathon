@@ -1,8 +1,8 @@
 // src/api/updateScore.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import pool from '../config/database';
-import { handleDatabaseError } from '../utils/errorHandler';
-import { UserService } from '../services/userService';
+import pool from '../config/database.js';
+import { handleDatabaseError } from '../utils/errorHandler.js';
+import { UserService } from '../services/userService.js';
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   if (req.method !== 'POST') {

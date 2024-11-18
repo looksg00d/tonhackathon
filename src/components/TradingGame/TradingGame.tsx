@@ -200,6 +200,14 @@ const TradingGame: FC = () => {
   // Функция для предсказания
   const makePredict = async (direction: PredictionType) => {
     if (hasPredicted) return;
+    
+    // Проверяем данные Telegram перед обработкой предсказания
+    if (!WebApp.initData || !validateTelegramUser(WebApp.initData)) {
+      console.error('Invalid or missing Telegram data');
+      alert('Ошибка авторизации Telegram');
+      return;
+    }
+
     setHasPredicted(true);
 
     const lastVisiblePoint = fullData[fullData.length - HIDDEN_DAYS - 1];
@@ -210,13 +218,8 @@ const TradingGame: FC = () => {
       return;
     }
 
-    const lastVisibleValue =
-      lastVisiblePoint.type === 'line'
-        ? lastVisiblePoint.value
-        : lastVisiblePoint.close;
-
-    const lastValue =
-      lastPoint.type === 'line' ? lastPoint.value : lastPoint.close;
+    const lastVisibleValue = getPriceFromDataPoint(lastVisiblePoint);
+    const lastValue = getPriceFromDataPoint(lastPoint);
 
     const actualDirection = lastValue > lastVisibleValue ? 'up' : 'down';
     const isCorrect = direction === actualDirection;
@@ -226,7 +229,7 @@ const TradingGame: FC = () => {
     let currentIndex = 0;
     let lastTimestamp = 0;
 
-    const animate = (timestamp: number) => {
+    const animate = async (timestamp: number) => {
       if (!lastTimestamp) lastTimestamp = timestamp;
       
       const elapsed = timestamp - lastTimestamp;
@@ -239,7 +242,7 @@ const TradingGame: FC = () => {
           lastTimestamp = timestamp;
         } else {
           setVisibleData(fullData);
-          setTimeout(async () => {
+          setTimeout(() => {
             alert(
               `${isCorrect ? '✅ Верно!' : '❌ Неверно!'} Токен: ${
                 currentToken?.name
@@ -252,28 +255,10 @@ const TradingGame: FC = () => {
 
               const user = WebApp.initDataUnsafe.user;
               if (user) {
-                try {
-                  const response = await fetch('/api/updateScore', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      user_id: user.id.toString(),
-                      username: `${user.first_name} ${user.last_name || ''}`,
-                      score: newScore,
-                    }),
-                  });
-
-                  if (!response.ok) {
-                    throw new Error('Failed to update score');
-                  }
-                } catch (error) {
-                  console.error('Error updating score:', error);
-                }
+                updateUserScore(user, newScore);
               }
             }
-          }, 500);
+          }, 100);
           return;
         }
       }
@@ -282,6 +267,29 @@ const TradingGame: FC = () => {
     };
 
     requestAnimationFrame(animate);
+  };
+
+  // Выделим обновление счета в отдельную функцию
+  const updateUserScore = async (user: any, newScore: number) => {
+    try {
+      const response = await fetch('/api/updateScore', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id.toString(),
+          username: `${user.first_name} ${user.last_name || ''}`,
+          score: newScore,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update score');
+      }
+    } catch (error) {
+      console.error('Error updating score:', error);
+    }
   };
 
   // Функция для перехода к следующей игре
@@ -309,11 +317,14 @@ const TradingGame: FC = () => {
     return dataPoint.close;
   };
 
-  const validateTelegramUser = (initData: string) => {
+  const validateTelegramUser = (initData: string): boolean => {
     try {
-      // Проверка подписи данных от Telegram
       const data = new URLSearchParams(initData);
-      // Добавьте здесь валидацию hash
+      // Проверяем наличие необходимых параметров
+      if (!data.get('user') || !data.get('hash')) {
+        return false;
+      }
+      // Здесь можно добавить дополнительную валидацию
       return true;
     } catch (error) {
       console.error('Invalid Telegram data:', error);
