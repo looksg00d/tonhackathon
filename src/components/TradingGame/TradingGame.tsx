@@ -49,7 +49,7 @@ const TradingGame: FC = () => {
   const HIDDEN_DAYS = 7;
   const ANIMATION_SPEED = 50;
 
-  // Эффект для анимации данных при их обновлении
+  // Effect to animate data when it's updated
   useEffect(() => {
     if (fullData.length > 0 && !isLoading) {
       const visible = fullData.slice(0, -HIDDEN_DAYS);
@@ -80,7 +80,7 @@ const TradingGame: FC = () => {
     }
   }, [fullData, isLoading]);
 
-  // Функция для получения случайного токена
+  // Function to get a random token
   const getRandomToken = (): TradingPair | null => {
     if (TRADING_PAIRS.length === 0) return null;
 
@@ -97,7 +97,7 @@ const TradingGame: FC = () => {
     return availablePairs[randomIndex];
   };
 
-  // Функция для загрузки данных
+  // Function to load data
   const loadData = async (token: TradingPair) => {
     setIsLoading(true);
     try {
@@ -129,14 +129,14 @@ const TradingGame: FC = () => {
       setFullData(slicedData);
     } catch (error) {
       console.error('Error loading data:', error);
-      alert('Ошибка при загрузке данных. Пожалуйста, попробуйте снова.');
+      alert('Error loading data. Please try again.');
       setIsGameStarted(false);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Функция для загрузки демо-данных BTC
+  // Function to load demo data for BTC
   const loadDemoData = async () => {
     try {
       const response = await fetch(
@@ -149,7 +149,7 @@ const TradingGame: FC = () => {
         time: item[0] / 1000,
         ...(chartType === 'line'
           ? {
-              value: parseFloat(item[4]), // Цена закрытия
+              value: parseFloat(item[4]), // Closing price
             }
           : {
               open: parseFloat(item[1]),
@@ -167,19 +167,19 @@ const TradingGame: FC = () => {
     }
   };
 
-  // Эффект для загрузки демо-данных при первом рендере
+  // Effect to load demo data on first render
   useEffect(() => {
     if (!isGameStarted) {
       loadDemoData();
       
-      // Обновляем данные каждую минуту
+      // Update data every minute
       const interval = setInterval(loadDemoData, 60000);
       
       return () => clearInterval(interval);
     }
   }, [isGameStarted, chartType]);
 
-  // Функция для запуска игры
+  // Function to start the game
   const startGame = async () => {
     setIsGameStarted(true);
     setShowPrediction(false);
@@ -197,14 +197,14 @@ const TradingGame: FC = () => {
     await loadData(token);
   };
 
-  // Функция для предсказания
+  // Function to make a prediction
   const makePredict = async (direction: PredictionType) => {
     if (hasPredicted) return;
     
-    // Проверяем данные Telegram перед обработкой предсказания
+    // Check Telegram data before processing the prediction
     if (!WebApp.initData || !validateTelegramUser(WebApp.initData)) {
       console.error('Invalid or missing Telegram data');
-      alert('Ошибка авторизации Telegram');
+      alert('Telegram authorization error');
       return;
     }
 
@@ -224,7 +224,7 @@ const TradingGame: FC = () => {
     const actualDirection = lastValue > lastVisibleValue ? 'up' : 'down';
     const isCorrect = direction === actualDirection;
 
-    // Анимация оставшихся данных
+    // Animate remaining data
     const remainingData = fullData.slice(-HIDDEN_DAYS);
     let currentIndex = 0;
     let lastTimestamp = 0;
@@ -244,7 +244,7 @@ const TradingGame: FC = () => {
           setVisibleData(fullData);
           setTimeout(() => {
             alert(
-              `${isCorrect ? '✅ Верно!' : '❌ Неверно!'} Токен: ${
+              `${isCorrect ? '✅ Correct!' : '❌ Incorrect!'} Token: ${
                 currentToken?.name
               } (${currentToken?.symbol.replace('USDT', '')})`
             );
@@ -269,7 +269,7 @@ const TradingGame: FC = () => {
     requestAnimationFrame(animate);
   };
 
-  // Выделим обновление счета в отдельную функцию
+  // Separate function to update score
   const updateUserScore = async (user: any, newScore: number) => {
     try {
       const response = await fetch('/api/updateScore', {
@@ -292,7 +292,7 @@ const TradingGame: FC = () => {
     }
   };
 
-  // Функция для перехода к следующей игре
+  // Function to move to the next game
   const nextGame = async () => {
     setShowNextButton(false);
     setHasPredicted(false);
@@ -309,7 +309,7 @@ const TradingGame: FC = () => {
     await loadData(token);
   };
 
-  // Вспомогательная функция для получения цены из точки данных
+  // Helper function to get price from data point
   const getPriceFromDataPoint = (dataPoint: ChartDataPoint): number => {
     if (dataPoint.type === 'line') {
       return dataPoint.value;
@@ -320,11 +320,11 @@ const TradingGame: FC = () => {
   const validateTelegramUser = (initData: string): boolean => {
     try {
       const data = new URLSearchParams(initData);
-      // Проверяем наличие необходимых параметров
+      // Check for necessary parameters
       if (!data.get('user') || !data.get('hash')) {
         return false;
       }
-      // Здесь можно добавить дополнительную валидацию
+      // Add additional validation here
       return true;
     } catch (error) {
       console.error('Invalid Telegram data:', error);

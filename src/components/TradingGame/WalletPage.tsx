@@ -15,7 +15,7 @@ export const WalletPage: FC = () => {
           <div className="wallet-page__connect-card">
             <TonConnectButton className="wallet-page__button"/>
             <Text className="wallet-page__hint">
-              Подключите кошелек для торговли
+              Connect your wallet to trade
             </Text>
           </div>
         ) : (
@@ -23,7 +23,7 @@ export const WalletPage: FC = () => {
             <TonConnectButton className="wallet-page__button"/>
           </div>
         )}
-        {/* Убрали компонент AeonConnect */}
+        {/* Removed AeonConnect component */}
         {/* <AeonConnect onConnect={handleAeonConnect} /> */}
       </div>
       <BottomNavigation />

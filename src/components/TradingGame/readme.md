@@ -1,56 +1,56 @@
-TradingGame.tsx (Основной компонент)
-Ответственность: Главный компонент, управляющий всей игровой логикой.
-Основные состояния:
-currentToken - текущая торговая пара
-chartType - тип графика (линия/свечи)
-isGameStarted - статус игры
-showPrediction - показывать ли кнопки прогноза
-showNextButton - показывать ли кнопку следующей игры
-fullData - полные данные графика
-visibleData - видимые данные графика
-score - счёт игрока
-hasPredicted - сделал ли игрок прогноз
-Основные методы:
-getRandomToken() - выбор случайной торговой пары
-loadData() - загрузка данных с API Binance
-startGame() - запуск новой игры
-makePredict() - обработка прогноза игрока
-nextGame() - переход к следующей игре
+TradingGame.tsx (Main component)
+Responsibility: The main component that manages all game logic.
+Main states:
+currentToken - current trading pair
+chartType - type of chart (line/candles)
+isGameStarted - game status
+showPrediction - whether to show prediction buttons
+showNextButton - whether to show the next game button
+fullData - full chart data
+visibleData - visible chart data
+score - player's score
+hasPredicted - whether the player has made a prediction
+Main methods:
+getRandomToken() - select a random trading pair
+loadData() - load data from the Binance API
+startGame() - start a new game
+makePredict() - process the player's prediction
+nextGame() - move to the next game
 
 
-TradingControls.tsx (Компонент управления)
-Ответственность: Управляющие элементы игры (выбор пары, тип графика, старт игры).
-Основные пропсы:
-tradingPairs - список доступных торговых пар
-selectedPair - выбранная пара
-onSelectPair - обработчик выбора пары
-chartType - тип графика
-onChangeChartType - обработчик смены типа графика
-onStartGame - обработчик старта игры
-isGameStarted - статус игры
-Компоненты управления:
-Select - выбор торговой пары
-Button (Линия/Свечи) - переключение типа графика
-Button (Старт) - запуск игры
+TradingControls.tsx (Control component)
+Responsibility: Game control elements (selecting pair, chart type, starting the game).
+Main props:
+tradingPairs - list of available trading pairs
+selectedPair - selected pair
+onSelectPair - pair selection handler
+chartType - type of chart
+onChangeChartType - chart type change handler
+onStartGame - game start handler
+isGameStarted - game status
+Control components:
+Select - select trading pair
+Button (Line/Candles) - switch chart type
+Button (Start) - start the game
 
 
-ChartComponent.tsx (Компонент графика)
-Ответственность: Отображение и управление графиком с помощью библиотеки lightweight-charts.
-Основные пропсы:
-data - данные для отображения
-chartType - тип графика
-width - ширина графика
-height - высота графика
-Основная логика:
-Инициализация графика
-Управление сериями данных (линейная/свечная)
-Обновление данных при изменении типа графика
-Преобразование данных для разных типов графиков
-Взаимодействие компонентов:
-TradingGame управляет состоянием игры и данными
-TradingControls предоставляет интерфейс управления
-ChartComponent отвечает за визуализацию данных
-Это создаёт чёткое разделение ответственности:
-Управление данными и логикой (TradingGame)
-Пользовательский интерфейс управления (TradingControls)
-Визуализация данных (ChartComponent)
+ChartComponent.tsx (Chart component)
+Responsibility: Display and manage the chart using the lightweight-charts library.
+Main props:
+data - data to display
+chartType - type of chart
+width - width of the chart
+height - height of the chart
+Main logic:
+Chart initialization
+Managing data series (line/candle)
+Updating data when the chart type changes
+Transforming data for different chart types
+Component interaction:
+TradingGame manages game state and data
+TradingControls provides the control interface
+ChartComponent is responsible for visualizing data
+This creates a clear separation of responsibilities:
+Data and logic management (TradingGame)
+User interface management (TradingControls)
+Data visualization (ChartComponent)

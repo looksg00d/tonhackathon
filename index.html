@@ -6,10 +6,10 @@
     <meta name="theme-color" content="#000000"/>
     <title>Trading Game - Telegram Mini App</title>
     
-    <!-- Подключаем стили Telegram Mini Apps -->
+    <!-- Connect Telegram Mini Apps styles -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Подключаем библиотеку для графиков -->
+    <!-- Connect chart library -->
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 
     <style>
@@ -31,7 +31,7 @@
             padding: 16px;
         }
 
-        /* Стили для компонента TradingGame */
+        /* Styles for the TradingGame component */
         .trading-game {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
             border-radius: 12px;
@@ -101,7 +101,7 @@
             padding: 16px;
         }
 
-        /* Адаптивные стили */
+        /* Responsive styles */
         @media (max-width: 480px) {
             #root {
                 padding: 8px;
@@ -122,7 +122,7 @@
             }
         }
 
-        /* Темная тема */
+        /* Dark theme */
         @media (prefers-color-scheme: dark) {
             body {
                 background-color: var(--tg-theme-bg-color, #1c1c1e);
@@ -137,15 +137,15 @@
 </head>
 <body>
     <div id="root">
-        <!-- React приложение будет монтироваться сюда -->
+        <!-- The React application will mount here -->
     </div>
 
-    <!-- Скрипт инициализации Telegram Mini App -->
+    <!-- Telegram Mini App initialization script -->
     <script>
-        // Инициализация Telegram Mini App
+        // Initialize Telegram Mini App
         window.Telegram.WebApp.ready();
 
-        // Устанавливаем тему
+        // Set theme
         const initTheme = () => {
             document.documentElement.className = window.Telegram.WebApp.colorScheme;
         };
@@ -154,7 +154,7 @@
         initTheme();
     </script>
 
-    <!-- Точка входа React приложения -->
+    <!-- Entry point for the React application -->
     <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>

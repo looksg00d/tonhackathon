@@ -13,14 +13,14 @@ export const AeonConnect: React.FC<AeonConnectProps> = ({ onConnect }) => {
     try {
       setIsConnecting(true);
       
-      // Здесь будет логика подключения к Aeon
+      // Here will be the logic for connecting to Aeon
       const tgInitData = window.Telegram.WebApp.initData;
       
       if (!tgInitData) {
         throw new Error("Telegram authentication Error!");
       }
 
-      // Вызываем callback если он передан
+      // Call the callback if it is provided
       if (onConnect) {
         onConnect();
       }
