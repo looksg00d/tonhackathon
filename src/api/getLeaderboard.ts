@@ -1,6 +1,6 @@
 // src/api/getLeaderboard.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import pool from '../config/database';
+import pool from '../config/database.js';
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   console.log('Received request to get leaderboard:', req.method);
